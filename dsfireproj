@@ -1,0 +1,140 @@
+#include<stdio.h>
+#define MAX 100
+int tree[MAX],2D[MAX][MAX], stack1[MAX], stack2[MAX];
+int top1=-1, top2=-1;
+int time=0;
+void insert()
+{
+    int i=0;
+    printf("Enter the elements:\n");
+    for(i=0; i<MAX; i++)
+    {
+        scanf("%d", tree[i]);  //Populate tree in level-ordered fashion
+    }
+}
+void create2DArray()
+{
+    int i,j;
+    for(i=0; i<MAX; i++)
+    {
+        for(j=0; j<MAX; j++)
+        {
+            2D[i][j]=0;
+        }
+    }
+    for(i=0; i<MAX; i++)
+    {
+        for(j=2*i+1; j<2*i+2; j++)
+        {
+            2D[i][j]=1;
+            2D[j][i]=1;
+        }
+    }
+}
+void burn(int n)
+{
+    int index, temp, temp2, tempArr[MAX];
+    int i,j, k;
+    for(i=0; i<MAX; i++)
+    {
+        if(tree[i]==n)
+        {
+            index=i;
+            break;
+        }
+    }
+    push1(index);
+    while(top1!=-1&&top2!=-1)
+    {
+        k=0;
+        for(j=0; j<MAX; j++)
+        {
+            if(2D[index][j]==1)
+            {
+                push2(j);
+                tempArr[k++]=j;
+            }
+        }
+        while(top1!=-1)
+        {
+            temp=pop1();
+            while(top2!=-1)
+            {
+                temp2=pop2();
+                2D[temp][temp2]=0;
+                2D[temp2][temp]=0;
+            }
+        }  //Here, both stacks get emptied.
+        time++;
+        for(i=0; i<k; i++)
+        {
+            push1(tempArr[i]);
+        }
+        index=peek1();
+    }
+}
+void push1(int value)
+{
+	if(top1==MAX)
+	{
+		printf("Overflow\n");
+	}
+	else
+	{
+		top1++;
+		stack1[top1]=val;
+	}
+}
+int pop1()
+{
+	int val;
+	if(top1==-1)
+	{
+		printf("Empty Stack\n");
+		return -1;
+	}
+	else
+	{
+		val=stack1[top1];
+		top1--;
+		return val;
+	}
+}
+void push2(int value)
+{
+	if(top2==MAX)
+	{
+		printf("Overflow\n");
+	}
+	else
+	{
+		top2++;
+		stack2[top2]=val;
+	}
+}
+int pop2()
+{
+	int val;
+	if(top2==-1)
+	{
+		printf("Empty Stack\n");
+		return -1;
+	}
+	else
+	{
+		val=stack2[top2];
+		top2--;
+		return val;
+	}
+}
+
+int main()
+{
+    int node;
+    insert();
+    create2DArray();
+    printf("Enter the node to be burnt: ");
+    scanf("%d", &node);
+    burn(node);
+    return 0;
+}
